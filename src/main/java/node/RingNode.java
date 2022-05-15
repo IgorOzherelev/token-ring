@@ -6,6 +6,7 @@ import ring.TokenRingObserver;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -18,22 +19,22 @@ public class RingNode implements Node {
     private static final int POLLING_TIME = 2;
 
     private long framesToGenerate = 1;
-    private boolean generate = false;
     private final long nodeId;
     private final String nodeInfo;
     private Node nextNode;
     private final TokenRingObserver observer;
-    private final BlockingQueue<Frame> framesToSend = new ArrayBlockingQueue<>(NODE_BUFFER_CAPACITY);
+    // private final BlockingQueue<Frame> framesToSend = new ArrayBlockingQueue<>(NODE_BUFFER_CAPACITY);
+    private final ConcurrentLinkedQueue<Frame> framesToSend = new ConcurrentLinkedQueue<>();
 
     private final AtomicBoolean aliveRingFlag;
 
-    public RingNode(long nodeId, TokenRingObserver observer, AtomicBoolean aliveRingFlag, long framesToGenerate, boolean generate) {
+    public RingNode(long nodeId, TokenRingObserver observer, AtomicBoolean aliveRingFlag,
+                    long framesToGenerate, boolean generate) {
         this.nodeId = nodeId;
         this.observer = observer;
         this.aliveRingFlag = aliveRingFlag;
         this.nodeInfo = "Node[" + nodeId + "]";
         this.framesToGenerate = framesToGenerate;
-        this.generate = generate;
         if (generate) {
             initFrames();
         }
@@ -64,12 +65,13 @@ public class RingNode implements Node {
     private void doWork() {
         Frame frame;
         if (framesToSend.size() != 0) {
-            try {
-                frame = this.framesToSend.poll(POLLING_TIME, TimeUnit.MILLISECONDS);
-            } catch (InterruptedException e) {
-                log.info("{} Caught InterruptedException while getting frame", nodeInfo, e);
-                throw new RuntimeException(e);
-            }
+//            try {
+//                frame = this.framesToSend.poll(POLLING_TIME, TimeUnit.MILLISECONDS);
+//            } catch (InterruptedException e) {
+//                log.info("{} Caught InterruptedException while getting frame", nodeInfo, e);
+//                throw new RuntimeException(e);
+//            }
+            frame = this.framesToSend.poll();
 
             if (frame != null) {
                 sleepHandle();

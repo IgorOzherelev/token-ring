@@ -12,5 +12,10 @@ public class Main {
                 processor.getObserver().dump();
             }
         }
+
+//        TokenRingProcessor processor = new TokenRingProcessor(20, 30,
+//                "nodes"+ 20 + "gen" + 30);
+//        processor.process();
+//        processor.getObserver().dump();
     }
 }
