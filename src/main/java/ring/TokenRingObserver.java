@@ -93,8 +93,8 @@ public class TokenRingObserver {
         String line = "Sent" + CSV_SEPARATOR +
                 "Received" + CSV_SEPARATOR +
                 "Returned" + CSV_SEPARATOR +
-                "Frames num" + CSV_SEPARATOR +
-                "Nodes num" + CSV_SEPARATOR;
+                "Frames" + CSV_SEPARATOR +
+                "Nodes";
 
         bw.write(line);
         bw.newLine();

@@ -30,9 +30,9 @@ public class TokenRingProcessor {
         initNodes();
     }
 
-    public void process() {
-        // this.aliveRingFlag.set(true);
-        this.nodes.stream().map(Thread::new).forEach(Thread::start);
+    public void process() throws InterruptedException {
+        List<Thread> threads = this.nodes.stream().map(Thread::new).toList();
+        threads.forEach(Thread::start);
         while (observer.isAllDataRegistered()) {
             synchronized (this.processorNotifier) {
                try {
@@ -42,6 +42,9 @@ public class TokenRingProcessor {
                    break;
                }
             }
+        }
+        for (Thread thread : threads) {
+            thread.join();
         }
     }
 

@@ -13,7 +13,7 @@ import static frame.Status.*;
 
 @Slf4j
 public class RingNode implements Node {
-    private static final int NODE_BUFFER_CAPACITY = 20;
+    private static final int NODE_BUFFER_CAPACITY = 100;
     private static final int SLEEP_HANDLING = 5;
     private static final int POLLING_TIME = 2;
 
@@ -47,7 +47,6 @@ public class RingNode implements Node {
 
             Frame frame = Frame.createFrame(nodeId, toId);
             framesToSend.add(frame);
-            System.out.println();
         }
     }
 
@@ -98,6 +97,8 @@ public class RingNode implements Node {
             frame.setStatus(RECEIVED);
             frame.getTimeMarks().setReceived();
             forward(frame);
+        } else {
+            forward(frame);
         }
     }
 
@@ -113,7 +114,6 @@ public class RingNode implements Node {
             log.info("{} Buffer is overflowed, sending frame to the next node", nodeInfo);
             forward(frame);
         }
-        System.out.println();
     }
 
     @Override
