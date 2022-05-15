@@ -12,7 +12,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Slf4j
 public class TokenRingProcessor {
     private final int nodesNum;
-    private final long framesToGeneratePerNode;
+    private final long framesToGenerate;
 
     @Getter
     private final TokenRingObserver observer;
@@ -20,13 +20,13 @@ public class TokenRingProcessor {
     private final AtomicBoolean aliveRingFlag = new AtomicBoolean(true);
     private final Object processorNotifier;
 
-    public TokenRingProcessor(int nodesNum, int framesToGeneratePerNode, String logFileName) {
+    public TokenRingProcessor(int nodesNum, int framesToGenerate, String logFileName) {
         this.nodesNum = nodesNum;
-        this.framesToGeneratePerNode = framesToGeneratePerNode;
+        this.framesToGenerate = framesToGenerate;
 
         this.processorNotifier = new Object();
         this.observer = new TokenRingObserver(logFileName, nodesNum,
-                framesToGeneratePerNode * (long) nodesNum, this.processorNotifier, aliveRingFlag);
+                framesToGenerate, this.processorNotifier, aliveRingFlag);
         initNodes();
     }
 
@@ -49,9 +49,11 @@ public class TokenRingProcessor {
     }
 
     private void initNodes() {
-        for (int i = 0; i < this.nodesNum; i++) {
-            this.nodes.add(new RingNode(i, this.observer, this.aliveRingFlag, this.framesToGeneratePerNode));
+        for (int i = 0; i < this.nodesNum - 1; i++) {
+            this.nodes.add(new RingNode(i, this.observer, this.aliveRingFlag, this.framesToGenerate, false));
         }
+
+        this.nodes.add(new RingNode(nodesNum - 1, this.observer, this.aliveRingFlag, this.framesToGenerate, true));
 
         for (int i = 0; i < nodesNum; i++) {
             this.nodes.get(i).setNext(this.nodes.get((i + 1) % this.nodesNum));

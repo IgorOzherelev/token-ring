@@ -18,6 +18,7 @@ public class RingNode implements Node {
     private static final int POLLING_TIME = 2;
 
     private long framesToGenerate = 1;
+    private boolean generate = false;
     private final long nodeId;
     private final String nodeInfo;
     private Node nextNode;
@@ -26,17 +27,20 @@ public class RingNode implements Node {
 
     private final AtomicBoolean aliveRingFlag;
 
-    public RingNode(long nodeId, TokenRingObserver observer, AtomicBoolean aliveRingFlag, long framesToGenerate) {
+    public RingNode(long nodeId, TokenRingObserver observer, AtomicBoolean aliveRingFlag, long framesToGenerate, boolean generate) {
         this.nodeId = nodeId;
         this.observer = observer;
         this.aliveRingFlag = aliveRingFlag;
         this.nodeInfo = "Node[" + nodeId + "]";
         this.framesToGenerate = framesToGenerate;
-        initFrames();
+        this.generate = generate;
+        if (generate) {
+            initFrames();
+        }
     }
 
     /*
-    * Каждая нода создает только framesToGenerate фреймов для посылки
+    * Нода создает только framesToGenerate фреймов для посылки, если есть флаг generate
     * */
     private void initFrames() {
         for (int i = 0; i < framesToGenerate; i++) {
@@ -59,16 +63,18 @@ public class RingNode implements Node {
 
     private void doWork() {
         Frame frame;
-        try {
-            frame = this.framesToSend.poll(POLLING_TIME, TimeUnit.MILLISECONDS);
-        } catch (InterruptedException e) {
-            log.info("{} Caught InterruptedException while getting frame", nodeInfo, e);
-            throw new RuntimeException(e);
-        }
+        if (framesToSend.size() != 0) {
+            try {
+                frame = this.framesToSend.poll(POLLING_TIME, TimeUnit.MILLISECONDS);
+            } catch (InterruptedException e) {
+                log.info("{} Caught InterruptedException while getting frame", nodeInfo, e);
+                throw new RuntimeException(e);
+            }
 
-        if (frame != null) {
-            sleepHandle();
-            handleFrame(frame);
+            if (frame != null) {
+                sleepHandle();
+                handleFrame(frame);
+            }
         }
     }
 
