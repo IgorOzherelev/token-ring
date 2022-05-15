@@ -2,18 +2,18 @@ package frame;
 
 public enum Status {
     RETURNED,
-    DELIVERED,
+    RECEIVED,
     FLYING;
 
-    public boolean isReturned(Frame frame) {
-        return frame.getStatus() == RETURNED;
+    public boolean isReturned() {
+        return this == RETURNED;
     }
 
-    public boolean isDelivered(Frame frame) {
-        return frame.getStatus() == DELIVERED;
+    public boolean isReceived() {
+        return this == RECEIVED;
     }
 
-    public boolean isFlying(Frame frame) {
-        return frame.getStatus() == FLYING;
+    public boolean isFlying() {
+        return this == FLYING;
     }
 }

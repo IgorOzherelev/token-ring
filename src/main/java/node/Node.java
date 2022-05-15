@@ -3,6 +3,8 @@ package node;
 import frame.Frame;
 
 public interface Node extends Runnable {
-    void sendFrame(Frame frame);
-    void receiveFrame(Frame frame);
+    void handleFrame(Frame frame);
+    void forward(Frame frame);
+    void receive(Frame frame);
+    void setNext(Node node);
 }
