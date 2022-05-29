@@ -20,12 +20,12 @@ public class TokenRingProcessor {
     private final AtomicBoolean aliveRingFlag = new AtomicBoolean(true);
     private final Object processorNotifier;
 
-    public TokenRingProcessor(int nodesNum, int framesToGenerate, String logFileName) {
+    public TokenRingProcessor(int nodesNum, int framesToGenerate, int tryNumber, String logFileName) {
         this.nodesNum = nodesNum;
         this.framesToGenerate = framesToGenerate;
 
         this.processorNotifier = new Object();
-        this.observer = new TokenRingObserver(logFileName, nodesNum,
+        this.observer = new TokenRingObserver(tryNumber, logFileName, nodesNum,
                 framesToGenerate, this.processorNotifier, aliveRingFlag);
         initNodes();
     }

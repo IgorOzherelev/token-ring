@@ -23,8 +23,8 @@ public class RingNode implements Node {
     private final String nodeInfo;
     private Node nextNode;
     private final TokenRingObserver observer;
-    // private final BlockingQueue<Frame> framesToSend = new ArrayBlockingQueue<>(NODE_BUFFER_CAPACITY);
-    private final ConcurrentLinkedQueue<Frame> framesToSend = new ConcurrentLinkedQueue<>();
+     private final BlockingQueue<Frame> framesToSend = new ArrayBlockingQueue<>(NODE_BUFFER_CAPACITY);
+//    private final ConcurrentLinkedQueue<Frame> framesToSend = new ConcurrentLinkedQueue<>();
 
     private final AtomicBoolean aliveRingFlag;
 
@@ -65,13 +65,13 @@ public class RingNode implements Node {
     private void doWork() {
         Frame frame;
         if (framesToSend.size() != 0) {
-//            try {
-//                frame = this.framesToSend.poll(POLLING_TIME, TimeUnit.MILLISECONDS);
-//            } catch (InterruptedException e) {
-//                log.info("{} Caught InterruptedException while getting frame", nodeInfo, e);
-//                throw new RuntimeException(e);
-//            }
-            frame = this.framesToSend.poll();
+            try {
+                frame = this.framesToSend.poll(POLLING_TIME, TimeUnit.MILLISECONDS);
+            } catch (InterruptedException e) {
+                log.info("{} Caught InterruptedException while getting frame", nodeInfo, e);
+                throw new RuntimeException(e);
+            }
+//            frame = this.framesToSend.poll();
 
             if (frame != null) {
                 sleepHandle();

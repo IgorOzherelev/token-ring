@@ -27,12 +27,14 @@ public class TokenRingObserver {
 
     private final Object processorNotifier;
 
-    public TokenRingObserver(String fileName, int nodesNum, long framesToRegister,
+    public TokenRingObserver(int tryNumber, String fileName, int nodesNum, long framesToRegister,
                              Object processorNotifier, AtomicBoolean aliveRingFlag) {
         try {
+            var tryDir = new File("src/main/resources/" + tryNumber);
+            boolean tr = tryDir.mkdir();
             this.bw = new BufferedWriter(
                     new OutputStreamWriter(
-                            new FileOutputStream("src/main/resources/" + fileName + ".csv"), StandardCharsets.UTF_8));
+                            new FileOutputStream("src/main/resources/" + tryNumber + "/" + fileName + ".csv"), StandardCharsets.UTF_8));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
